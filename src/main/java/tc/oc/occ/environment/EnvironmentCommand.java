@@ -8,7 +8,7 @@ import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Dependency;
 import co.aikar.commands.annotation.Subcommand;
 import java.util.Set;
-import net.md_5.bungee.api.ChatColor;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 @CommandAlias("env")
