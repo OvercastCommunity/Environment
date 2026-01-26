@@ -1,0 +1,40 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - dev
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Build jar
+        run: mvn --batch-mode --update-snapshots verify
+
+      - name: Move generated jar file
+        run: mv target/Environment-*.jar Environment.jar
+
+      - name: Set short SHA
+        run: echo "SHORT_SHA=${GITHUB_SHA::7}" >> "$GITHUB_ENV"
+
+      - name: Create Release
+        if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/dev')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: Environment-${{env.SHORT_SHA}}
+          name: Release ${{env.SHORT_SHA}}
+          files: Environment.jar
